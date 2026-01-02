@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Voice Assistant</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    margin:0;
+    background:#f0f4f8;
+}
+header{
+    background:#0f2027;
+    color:white;
+    padding:25px;
+    text-align:center;
+}
+section{
+    background:white;
+    margin:20px;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+button{
+    padding:12px 20px;
+    font-size:16px;
+    margin:5px;
+    cursor:pointer;
+}
+.status{
+    font-weight:bold;
+}
+#log{
+    background:#eee;
+    padding:10px;
+    height:180px;
+    overflow-y:auto;
+}
+.device{
+    font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Smart Voice Assistant</h1>
+<p>College Project Website</p>
+</header>
+
+<section>
+<button onclick="startListening()">🎤 Speak Command</button>
+<p class="status">Status: <span id="status">Idle</span></p>
+</section>
+
+<section>
+<h2>Smart Home Devices</h2>
+<p class="device">💡 Lights: <span id="light">OFF</span></p>
+<p class="device">🌀 Fan: <span id="fan">OFF</span></p>
+</section>
+
+<section>
+<h2>System Log</h2>
+<div id="log"></div>
+</section>
+
+<script>
+const statusText = document.getElementById("status");
+const log = document.getElementById("log");
+const light = document.getElementById("light");
+const fan = document.getElementById("fan");
+
+function addLog(msg){
+    log.innerHTML += msg + "<br>";
+    log.scrollTop = log.scrollHeight;
+}
+
+function startListening(){
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-IN";
+    recognition.start();
+    statusText.innerText = "Listening...";
+
+    recognition.onresult = function(event){
+        const command = event.results[0][0].transcript.toLowerCase();
+        statusText.innerText = command;
+        processCommand(command);
+    };
+}
+
+function processCommand(cmd){
+
+    if(cmd.includes("emergency")){
+        addLog("🚨 Emergency activated");
+        alert("Calling emergency contact!");
+    }
+
+    else if(cmd.includes("lights on")){
+        light.innerText = "ON";
+        addLog("💡 Lights turned ON");
+    }
+
+    else if(cmd.includes("lights off")){
+        light.innerText = "OFF";
+        addLog("💡 Lights turned OFF");
+    }
+
+    else if(cmd.includes("fan on")){
+        fan.innerText = "ON";
+        addLog("🌀 Fan turned ON");
+    }
+
+    else if(cmd.includes("fan off")){
+        fan.innerText = "OFF";
+        addLog("🌀 Fan turned OFF");
+    }
+
+    else if(cmd.includes("auto off")){
+        addLog("⏱ Devices will turn OFF in 5 seconds");
+        setTimeout(()=>{
+            light.innerText = "OFF";
+            fan.innerText = "OFF";
+            addLog("💤 Devices auto turned OFF");
+        },5000);
+    }
+
+    else if(cmd.includes("play music")){
+        addLog("🎵 Playing music");
+        new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3").play();
+    }
+
+    else if(cmd.includes("medicine")){
+        addLog("💊 Medicine reminder set");
+        setTimeout(()=>{
+            alert("Time to take medicine!");
+        },6000);
+    }
+
+    else if(cmd.includes("someone entered")){
+        addLog("🚪 Alert: Someone entered home");
+        alert("Motion detected!");
+    }
+
+    else{
+        addLog("❓ Command not recognized");
+    }
+}
+</script>
+
+</body>
+</html>
